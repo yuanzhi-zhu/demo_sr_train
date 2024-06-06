@@ -11,10 +11,6 @@ from utils import utils_logger
 from utils import utils_image as util
 from utils import utils_model
 
-import time
-import sys
-import cv2
-
 
 '''
 Spyder (Python 3.6)
@@ -69,7 +65,7 @@ def main():
     # Preparation
     # ----------------------------------------
 
-    model_name = 'msrresnet_x4_psnr'     # 'msrresnet_x4_gan' | 'msrresnet_x4_psnr'
+    model_name = 'MSRResNetx4'     # 'msrresnet_x4_gan' | 'msrresnet_x4_psnr'
     testset_name = 'set5'                # test set,  'set5' | 'srbsd68'
     need_degradation = True              # default: True
     x8 = False                           # default: False, x8 to boost performance, default: False
@@ -109,8 +105,8 @@ def main():
     # load model
     # ----------------------------------------
 
-    from networks.network_msrresnet import MSRResNet1 as net
-    model = net(in_nc=n_channels, out_nc=n_channels, nc=64, nb=16, upscale=4)
+    from networks.network_srresnet import MSRResNet as net
+    model = net(in_nc=n_channels, out_nc=n_channels, nf=64, nb=16, upscale=4)
     model.load_state_dict(torch.load(model_path), strict=True)
     model.eval()
     for k, v in model.named_parameters():

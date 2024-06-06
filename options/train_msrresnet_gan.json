@@ -8,9 +8,6 @@
   , "sigma": [0, 50] // 15, 25, 50 for DnCNN | [0, 75] for FDnCNN and FFDNet
   , "sigma_test": 0  // 15, 25, 50 for DnCNN, FDnCNN and FFDNet, 0 for SR
 
-  , "merge_bn": false              // if no BN exists, set false
-  , "merge_bn_startpoint": 400000  // merge BN after N iterations
-
   , "path": {
     "root": "superresolution"  // "denoising" | "superresolution"
     , "pretrained_netG": null  // path of pretrained model
@@ -41,17 +38,11 @@
   }
 
   , "netG": {
-    "net_type": "msrresnet0"  // "dncnn" | "fdncnn" | "ffdnet" | "srmd" | "dpsr" | "msrresnet0" |  "msrresnet1" | "rrdb" 
+    "net_type": "msrresnet"  //  "msrresnet0" |  "msrresnet1" | "rrdb" 
     , "in_nc": 3        // input channel number
     , "out_nc": 3       // ouput channel number
-    , "nc": 64          // 96 for DPSR, 128 for SRMD, 64 for DnCNN and MSRResNet
+    , "nf": 64          // 96 for DPSR, 128 for SRMD, 64 for DnCNN and MSRResNet
     , "nb": 16          // 12 for "srmd", 15 for "ffdnet", 20 for "dncnn", 16 for "srresnet" and "dpsr"
-    , "gc": 32          // unused
-    , "ng": 2           // unused
-    , "reduction" : 16  // unused
-    , "act_mode": "R"   // "BR" for BN+ReLU | "R" for ReLU
-    , "upsample_mode": "upconv"         // "pixelshuffle" | "convtranspose" | "upconv"
-    , "downsample_mode": "strideconv"   // "strideconv" | "avgpool" | "maxpool"
 
     , "init_type": "orthogonal"         // "orthogonal" | "normal" | "uniform" | "xavier_normal" | "xavier_uniform" | "kaiming_normal" | "kaiming_uniform"
     , "init_bn_type": "uniform"         // "uniform" | "constant"
@@ -59,10 +50,9 @@
   }
 
   , "netD": {
-    "net_type": "discriminator_vgg_96" // "discriminator_patchgan" | "discriminator_unet" | "discriminator_vgg_192" | "discriminator_vgg_128" | "discriminator_vgg_96"
+    "net_type": "discriminator_unet" // "discriminator_patchgan" | "discriminator_unet" | "discriminator_vgg_192" | "discriminator_vgg_128" | "discriminator_vgg_96"
     , "in_nc": 3
-    , "base_nc": 64
-    , "act_mode": "BL"                 // "BL" means BN+LeakyReLU
+    , "ndf": 64
     , "n_layers": 3   // only for "net_type":"discriminator_patchgan"
     , "norm_type": 3  // only for "net_type":"discriminator_patchgan"  | 'batch', 'instance', 'spectral', 'batchspectral', instancespectral'
 

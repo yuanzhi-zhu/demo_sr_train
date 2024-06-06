@@ -7,7 +7,6 @@ from torch.optim import Adam
 from networks.select_network import define_G, define_D
 from models.model_base import ModelBase
 from models.loss import GANLoss, PerceptualLoss
-from models.loss_ssim import SSIMLoss
 
 
 class ModelGAN(ModelBase):
@@ -110,8 +109,6 @@ class ModelGAN(ModelBase):
                 self.G_lossfn = nn.MSELoss().to(self.device)
             elif G_lossfn_type == 'l2sum':
                 self.G_lossfn = nn.MSELoss(reduction='sum').to(self.device)
-            elif G_lossfn_type == 'ssim':
-                self.G_lossfn = SSIMLoss().to(self.device)
             else:
                 raise NotImplementedError('Loss type [{:s}] is not found.'.format(G_lossfn_type))
             self.G_lossfn_weight = self.opt_train['G_lossfn_weight']

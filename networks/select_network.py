@@ -22,77 +22,15 @@ def define_G(opt):
     # ----------------------------------------
 
     # ----------------------------------------
-    # modified SRResNet v0.0
-    # ----------------------------------------
-    if net_type == 'msrresnet0':
-        from networks.network_msrresnet import MSRResNet0 as net
-        netG = net(in_nc=opt_net['in_nc'],
-                   out_nc=opt_net['out_nc'],
-                   nc=opt_net['nc'],
-                   nb=opt_net['nb'],
-                   upscale=opt_net['scale'],
-                   act_mode=opt_net['act_mode'],
-                   upsample_mode=opt_net['upsample_mode'])
-
-    # ----------------------------------------
     # modified SRResNet v0.1
     # ----------------------------------------
-    elif net_type == 'msrresnet1':
-        from networks.network_msrresnet import MSRResNet1 as net
+    if net_type == 'msrresnet':
+        from networks.network_srresnet import MSRResNet as net
         netG = net(in_nc=opt_net['in_nc'],
                    out_nc=opt_net['out_nc'],
-                   nc=opt_net['nc'],
+                   nf=opt_net['nf'],
                    nb=opt_net['nb'],
-                   upscale=opt_net['scale'],
-                   act_mode=opt_net['act_mode'],
-                   upsample_mode=opt_net['upsample_mode'])
-
-    # ----------------------------------------
-    # USRNet
-    # ----------------------------------------
-    elif net_type == 'usrnet':  # USRNet
-        from networks.network_usrnet import USRNet as net
-        netG = net(n_iter=opt_net['n_iter'],
-                   h_nc=opt_net['h_nc'],
-                   in_nc=opt_net['in_nc'],
-                   out_nc=opt_net['out_nc'],
-                   nc=opt_net['nc'],
-                   nb=opt_net['nb'],
-                   act_mode=opt_net['act_mode'],
-                   downsample_mode=opt_net['downsample_mode'],
-                   upsample_mode=opt_net['upsample_mode']
-                   )
-
-    # ----------------------------------------
-    # Deep Residual U-Net (drunet)
-    # ----------------------------------------
-    elif net_type == 'drunet':
-        from networks.network_unet import UNetRes as net
-        netG = net(in_nc=opt_net['in_nc'],
-                   out_nc=opt_net['out_nc'],
-                   nc=opt_net['nc'],
-                   nb=opt_net['nb'],
-                   act_mode=opt_net['act_mode'],
-                   downsample_mode=opt_net['downsample_mode'],
-                   upsample_mode=opt_net['upsample_mode'],
-                   bias=opt_net['bias'])
-
-    # ----------------------------------------
-    # SwinIR
-    # ----------------------------------------
-    elif net_type == 'swinir':
-        from networks.network_swinir import SwinIR as net
-        netG = net(upscale=opt_net['upscale'],
-                   in_chans=opt_net['in_chans'],
-                   img_size=opt_net['img_size'],
-                   window_size=opt_net['window_size'],
-                   img_range=opt_net['img_range'],
-                   depths=opt_net['depths'],
-                   embed_dim=opt_net['embed_dim'],
-                   num_heads=opt_net['num_heads'],
-                   mlp_ratio=opt_net['mlp_ratio'],
-                   upsampler=opt_net['upsampler'],
-                   resi_connection=opt_net['resi_connection'])
+                   upscale=opt_net['scale'],)
 
     else:
         raise NotImplementedError('netG [{:s}] is not found.'.format(net_type))
@@ -115,49 +53,8 @@ def define_G(opt):
 def define_D(opt):
     opt_net = opt['netD']
     net_type = opt_net['net_type']
-
-    # ----------------------------------------
-    # discriminator_vgg_96
-    # ----------------------------------------
-    if net_type == 'discriminator_vgg_96':
-        from networks.network_discriminator import Discriminator_VGG_96 as discriminator
-        netD = discriminator(in_nc=opt_net['in_nc'],
-                             base_nc=opt_net['base_nc'],
-                             ac_type=opt_net['act_mode'])
-
-    # ----------------------------------------
-    # discriminator_vgg_128
-    # ----------------------------------------
-    elif net_type == 'discriminator_vgg_128':
-        from networks.network_discriminator import Discriminator_VGG_128 as discriminator
-        netD = discriminator(in_nc=opt_net['in_nc'],
-                             base_nc=opt_net['base_nc'],
-                             ac_type=opt_net['act_mode'])
-
-    # ----------------------------------------
-    # discriminator_vgg_192
-    # ----------------------------------------
-    elif net_type == 'discriminator_vgg_192':
-        from networks.network_discriminator import Discriminator_VGG_192 as discriminator
-        netD = discriminator(in_nc=opt_net['in_nc'],
-                             base_nc=opt_net['base_nc'],
-                             ac_type=opt_net['act_mode'])
-
-    # ----------------------------------------
-    # discriminator_vgg_128_SN
-    # ----------------------------------------
-    elif net_type == 'discriminator_vgg_128_SN':
-        from networks.network_discriminator import Discriminator_VGG_128_SN as discriminator
-        netD = discriminator()
-
-    elif net_type == 'discriminator_patchgan':
-        from networks.network_discriminator import Discriminator_PatchGAN as discriminator
-        netD = discriminator(input_nc=opt_net['in_nc'],
-                             ndf=opt_net['base_nc'],
-                             n_layers=opt_net['n_layers'],
-                             norm_type=opt_net['norm_type'])
-
-    elif net_type == 'discriminator_unet':
+    
+    if net_type == 'discriminator_unet':
         from networks.network_discriminator import Discriminator_UNet as discriminator
         netD = discriminator(input_nc=opt_net['in_nc'],
                              ndf=opt_net['base_nc'])

@@ -7,10 +7,8 @@ from torch.optim import Adam
 from networks.select_network import define_G
 from models.model_base import ModelBase
 from models.loss import CharbonnierLoss
-from models.loss_ssim import SSIMLoss
 
 from utils.utils_model import test_mode
-from utils.utils_regularizers import regularizer_orth, regularizer_clip
 
 
 class ModelPlain(ModelBase):
@@ -93,8 +91,6 @@ class ModelPlain(ModelBase):
             self.G_lossfn = nn.MSELoss().to(self.device)
         elif G_lossfn_type == 'l2sum':
             self.G_lossfn = nn.MSELoss(reduction='sum').to(self.device)
-        elif G_lossfn_type == 'ssim':
-            self.G_lossfn = SSIMLoss().to(self.device)
         elif G_lossfn_type == 'charbonnier':
             self.G_lossfn = CharbonnierLoss(self.opt_train['G_charbonnier_eps']).to(self.device)
         else:
@@ -178,16 +174,6 @@ class ModelPlain(ModelBase):
 
         self.amp_scaler.step(self.G_optimizer)
         self.amp_scaler.update()
-
-        # ------------------------------------
-        # regularizer
-        # ------------------------------------
-        G_regularizer_orthstep = self.opt_train['G_regularizer_orthstep'] if self.opt_train['G_regularizer_orthstep'] else 0
-        if G_regularizer_orthstep > 0 and current_step % G_regularizer_orthstep == 0 and current_step % self.opt['train']['checkpoint_save'] != 0:
-            self.netG.apply(regularizer_orth)
-        G_regularizer_clipstep = self.opt_train['G_regularizer_clipstep'] if self.opt_train['G_regularizer_clipstep'] else 0
-        if G_regularizer_clipstep > 0 and current_step % G_regularizer_clipstep == 0 and current_step % self.opt['train']['checkpoint_save'] != 0:
-            self.netG.apply(regularizer_clip)
 
         # self.log_dict['G_loss'] = G_loss.item()/self.E.size()[0]  # if `reduction='sum'`
         self.log_dict['G_loss'] = G_loss.item()

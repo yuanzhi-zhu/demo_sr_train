@@ -1,6 +1,5 @@
 import os
 import torch
-from utils.utils_bnorm import merge_bn, tidy_sequential
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 
@@ -201,26 +200,3 @@ class ModelBase():
         netE_params = dict(self.netE.named_parameters())
         for k in netG_params.keys():
             netE_params[k].data.mul_(decay).add_(netG_params[k].data, alpha=1-decay)
-
-    """
-    # ----------------------------------------
-    # Merge Batch Normalization for training
-    # Merge Batch Normalization for testing
-    # ----------------------------------------
-    """
-
-    # ----------------------------------------
-    # merge bn during training
-    # ----------------------------------------
-    def merge_bnorm_train(self):
-        merge_bn(self.netG)
-        tidy_sequential(self.netG)
-        self.define_optimizer()
-        self.define_scheduler()
-
-    # ----------------------------------------
-    # merge bn before testing
-    # ----------------------------------------
-    def merge_bnorm_test(self):
-        merge_bn(self.netG)
-        tidy_sequential(self.netG)
