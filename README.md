@@ -1,4 +1,4 @@
-## A lite version of [KAIR](https://github.com/cszn/KAIR/) for SISR
+## Simple training demo for SISR
 
 
 - Download [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) dataset.
