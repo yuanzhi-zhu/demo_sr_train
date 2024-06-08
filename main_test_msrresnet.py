@@ -1,7 +1,6 @@
 import os.path
 import logging
 import re
-
 import numpy as np
 from collections import OrderedDict
 
@@ -12,49 +11,17 @@ from utils import utils_image as util
 from utils import utils_model
 
 
-'''
-Spyder (Python 3.6)
-PyTorch 1.1.0
-Windows 10 or Linux
-
+"""
 Kai Zhang (cskaizhang@gmail.com)
 github: https://github.com/cszn/KAIR
 
-If you have any question, please feel free to contact with me.
-Kai Zhang (e-mail: cskaizhang@gmail.com)
-(github: https://github.com/cszn/KAIR)
-
-by Kai Zhang (12/Dec./2019)
-'''
-
-"""
 # --------------------------------------------
-testing demo for RRDB-ESRGAN
-https://github.com/xinntao/ESRGAN
-@inproceedings{wang2018esrgan,
-  title={Esrgan: Enhanced super-resolution generative adversarial networks},
-  author={Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Qiao, Yu and Change Loy, Chen},
-  booktitle={European Conference on Computer Vision (ECCV)},
-  pages={0--0},
-  year={2018}
-}
-@inproceedings{ledig2017photo,
-  title={Photo-realistic single image super-resolution using a generative adversarial network},
-  author={Ledig, Christian and Theis, Lucas and Husz{\'a}r, Ferenc and Caballero, Jose and Cunningham, Andrew and Acosta, Alejandro and Aitken, Andrew and Tejani, Alykhan and Totz, Johannes and Wang, Zehan and others},
-  booktitle={IEEE conference on computer vision and pattern recognition},
-  pages={4681--4690},
-  year={2017}
-}
-# --------------------------------------------
-|--model_zoo                # model_zoo
-   |--msrresnet_x4_gan      # model_name, optimized for perceptual quality      
-   |--msrresnet_x4_psnr     # model_name, optimized for PSNR
+|--model_zoo                # model_zoo  
+   |--MSRResNetx4           # model_name, optimized for PSNR
 |--testset                  # testsets
    |--set5                  # testset_name
-   |--srbsd68
 |--results                  # results
-   |--set5_msrresnet_x4_gan # result_name = testset_name + '_' + model_name
-   |--set5_msrresnet_x4_psnr
+   |--set5_MSRResNetx4      # result_name = testset_name + '_' + model_name
 # --------------------------------------------
 """
 
@@ -65,23 +32,21 @@ def main():
     # Preparation
     # ----------------------------------------
 
-    model_name = 'MSRResNetx4'     # 'msrresnet_x4_gan' | 'msrresnet_x4_psnr'
+    model_name = 'MSRResNetx4'           # 
     testset_name = 'set5'                # test set,  'set5' | 'srbsd68'
     need_degradation = True              # default: True
-    x8 = False                           # default: False, x8 to boost performance, default: False
-    sf = [int(s) for s in re.findall(r'\d+', model_name)][0]  # scale factor
+    sf = 4                               # scale factor
     show_img = False                     # default: False
 
-
-    task_current = 'sr'       # 'dn' for denoising | 'sr' for super-resolution
+    task_current = 'sr'       # 'sr' for super-resolution
     n_channels = 3            # fixed
-    model_pool = 'model_zoo'  # fixed
+    model_zoo = 'model_zoo'   # fixed
     testsets = 'testsets'     # fixed
     results = 'results'       # fixed
     noise_level_img = 0       # fixed: 0, noise level for LR image
     result_name = testset_name + '_' + model_name
     border = sf if task_current == 'sr' else 0     # shave boader to calculate PSNR and SSIM
-    model_path = os.path.join(model_pool, model_name+'.pth')
+    model_path = os.path.join(model_zoo, model_name+'.pth')
 
     # ----------------------------------------
     # L_path, E_path, H_path
@@ -155,11 +120,7 @@ def main():
         # (2) img_E
         # ------------------------------------
 
-        if not x8:
-            img_E = model(img_L)
-        else:
-            img_E = utils_model.test_mode(model, img_L, mode=3, sf=sf)
-
+        img_E = model(img_L)
         img_E = util.tensor2uint(img_E)
 
         if need_H:
