@@ -1,8 +1,7 @@
 ## Simple training demo for SISR
 
 
-- Download [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) dataset.
-- put the datasets in `trainsets/trainH`.
+
 
 
 ```python
