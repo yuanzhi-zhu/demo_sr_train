@@ -2,7 +2,7 @@
 
 
 - Download [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) dataset.
-- put the datasets in `datasets/trainH/DIV2K`.
+- put the datasets in `trainsets/trainH`.
 
 
 ```python
