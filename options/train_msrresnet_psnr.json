@@ -15,7 +15,7 @@
     , "pretrained_netE": null      // path of pretrained model
   }
   
-  , "use_amp": true      // use automatic mixed precision training
+  , "use_amp": false      // use automatic mixed precision training
   , "compile": false      // compile model
 
   , "datasets": {
@@ -27,7 +27,7 @@
       , "H_size": 96                    // patch size 40 | 64 | 96 | 128 | 192
       , "dataloader_shuffle": true
       , "dataloader_num_workers": 4
-      , "dataloader_batch_size": 32     // batch size 1 | 16 | 32 | 48 | 64 | 128
+      , "dataloader_batch_size": 8     // batch size 1 | 16 | 32 | 48 | 64 | 128
     }
     , "test": {
       "name": "test_dataset"            // just name
@@ -71,9 +71,9 @@
     , "G_param_strict": true
     , "E_param_strict": true
 
-    , "checkpoint_test": 5000           // for testing
-    , "checkpoint_save": 5000           // for saving model
-    , "checkpoint_print": 100           // for print
+    , "checkpoint_test": 1000           // for testing
+    , "checkpoint_save": 1000           // for saving model
+    , "checkpoint_print": 5           // for print
 
     , "manual_seed": 1024                  // random seed
   }
