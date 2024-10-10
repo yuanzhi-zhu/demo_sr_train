@@ -45,6 +45,7 @@ def main(json_path='options/train_msrresnet_psnr.json'):
 
     opt = option.parse(parser.parse_args().opt, is_train=True)
     opt['dist'] = parser.parse_args().dist
+    opt['dist'] = opt['dist'] if torch.cuda.is_available() else False
 
     # ----------------------------------------
     # distributed settings

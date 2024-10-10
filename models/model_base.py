@@ -12,6 +12,7 @@ class ModelBase():
             self.device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
         else:
             self.device = torch.device("cpu")
+        self.device = self.device if torch.cuda.is_available() else torch.device('cpu')
         self.is_train = opt['is_train']        # training or not
         self.schedulers = []                   # schedulers
         self.amp_scaler = torch.cuda.amp.GradScaler(enabled=self.opt['use_amp'])
