@@ -158,7 +158,7 @@ class ModelPlain(ModelBase):
     # ----------------------------------------
     def optimize_parameters(self, current_step):
         self.G_optimizer.zero_grad()
-        with torch.autocast(device_type=self.device, enabled=self.opt['use_amp']):
+        with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
             self.netG_forward()
             G_loss = self.G_lossfn_weight * self.G_lossfn(self.E, self.H)
         self.amp_scaler.scale(G_loss).backward()

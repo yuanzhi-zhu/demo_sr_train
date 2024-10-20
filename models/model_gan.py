@@ -204,26 +204,26 @@ class ModelGAN(ModelBase):
             p.requires_grad = False
 
         self.G_optimizer.zero_grad()
-        with torch.autocast(device_type=self.devic, enabled=self.opt['use_amp']):
+        with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
             self.netG_forward()
             loss_G_total = 0
 
         if current_step % self.D_update_ratio == 0 and current_step > self.D_init_iters:  # updata D first
             if self.opt_train['G_lossfn_weight'] > 0:
-                with torch.autocast(device_type=self.devic, enabled=self.opt['use_amp']):
+                with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                     G_loss = self.G_lossfn_weight * self.G_lossfn(self.E, self.H)
                     loss_G_total += G_loss                 # 1) pixel loss
             if self.opt_train['F_lossfn_weight'] > 0:
-                with torch.autocast(device_type=self.devic, enabled=self.opt['use_amp']):
+                with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                     F_loss = self.F_lossfn_weight * self.F_lossfn(self.E, self.H)
                     loss_G_total += F_loss                 # 2) VGG feature loss
 
             if self.opt['train']['gan_type'] in ['gan', 'lsgan', 'wgan', 'softplusgan']:
-                with torch.autocast(device_type=self.devic, enabled=self.opt['use_amp']):
+                with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                     pred_g_fake = self.netD(self.E)
                     D_loss = self.D_lossfn_weight * self.D_lossfn(pred_g_fake, True)
             elif self.opt['train']['gan_type'] == 'ragan':
-                with torch.autocast(device_type=self.devic, enabled=self.opt['use_amp']):
+                with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                     pred_d_real = self.netD(self.H).detach()
                     pred_g_fake = self.netD(self.E)
                     D_loss = self.D_lossfn_weight * (
@@ -251,24 +251,24 @@ class ModelGAN(ModelBase):
         # tensor for calculating mean.
         if self.opt_train['gan_type'] in ['gan', 'lsgan', 'wgan', 'softplusgan']:
             # real
-            with torch.autocast(device_type=self.netG.device, enabled=self.opt['use_amp']):
+            with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                 pred_d_real = self.netD(self.H)                # 1) real data
                 l_d_real = self.D_lossfn(pred_d_real, True)
             self.amp_scaler.scale(l_d_real).backward()
             # fake
-            with torch.autocast(device_type=self.netG.device, enabled=self.opt['use_amp']):
+            with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                 pred_d_fake = self.netD(self.E.detach().clone()) # 2) fake data, detach to avoid BP to G
                 l_d_fake = self.D_lossfn(pred_d_fake, False)
             self.amp_scaler.scale(l_d_fake).backward()
         elif self.opt_train['gan_type'] == 'ragan':
             # real
-            with torch.autocast(device_type=self.netG.device, enabled=self.opt['use_amp']):
+            with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                 pred_d_fake = self.netD(self.E).detach()       # 1) fake data, detach to avoid BP to G
                 pred_d_real = self.netD(self.H)                # 2) real data
                 l_d_real = 0.5 * self.D_lossfn(pred_d_real - torch.mean(pred_d_fake, 0, True), True)
             self.amp_scaler.scale(l_d_real).backward()
             # fake
-            with torch.autocast(device_type=self.netG.device, enabled=self.opt['use_amp']):
+            with torch.autocast(device_type=self.device.type, enabled=self.opt['use_amp']):
                 pred_d_fake = self.netD(self.E.detach())
                 l_d_fake = 0.5 * self.D_lossfn(pred_d_fake - torch.mean(pred_d_real.detach(), 0, True), False)
             self.amp_scaler.scale(l_d_fake).backward()
